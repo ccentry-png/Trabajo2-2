@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "1017506664125",
+    "firebase_url": "https://cooal-6bb1b-default-rtdb.firebaseio.com",
+    "project_id": "cooal-6bb1b",
+    "storage_bucket": "cooal-6bb1b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017506664125:android:05e3afed9698ef5e00b1d4",
+        "android_client_info": {
+          "package_name": "cl.ipvg.trabajo2_2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIyzwrYrisWy2nHagw6SVwiA-tl9WWytk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017506664125:android:ce4cc18d4bf4d33900b1d4",
+        "android_client_info": {
+          "package_name": "cl.isisur.basedatosfirebase2022"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIyzwrYrisWy2nHagw6SVwiA-tl9WWytk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
