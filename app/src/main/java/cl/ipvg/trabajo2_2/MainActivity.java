@@ -2,18 +2,22 @@ package cl.ipvg.trabajo2_2;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     TextView tvNombreCliente;
     TextView tvRutCliente;
     TextView tvTelefonoCliente;
+    List<Cliente> Clientes;
+    List<String> ClientesNombres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
         tvTelefonoCliente = findViewById(R.id.editTextTelefono);
 
 
+        inicializarFireBase();
 
-        GetClientesYProductosDeFirebase();
+        //crear cliente
         btnCrearCliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,73 +73,23 @@ public class MainActivity extends AppCompatActivity {
                 c.setNumeroTelefono(tvTelefonoCliente.getText().toString());
 
                 databaseReference.child("Cliente").child(c.getIdCliente()).setValue(c);
-
-
-
             }
         });
+
+
+
+//
+
 
 
 
         //setup list
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
-        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v,
-                                        int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
-
-        // Listview Group expanded listener
-        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                //Toast.makeText(getApplicationContext(),
-                  //      listDataHeader.get(groupPosition) + " Expanded",
-                    //    Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Listview Group collasped listener
-        expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-                //Toast.makeText(getApplicationContext(),
-                  //      listDataHeader.get(groupPosition) + " Collapsed",
-                    //    Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        // Listview on child click listener
-        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                //  Auto-generated method stub
-                /*Toast.makeText(
-                                getApplicationContext(),
-                                listDataHeader.get(groupPosition)
-                                        + " : "
-                                        + listDataChild.get(
-                                        listDataHeader.get(groupPosition)).get(
-                                        childPosition), Toast.LENGTH_SHORT)
-                        .show(); */
-                return false;
-            }
-        });
-    }
 
 
+
+}
     private void GetClientesYProductosDeFirebase() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
@@ -143,16 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
 
-        List<String> nowShowing = new ArrayList<String>();
+        ClientesNombres = new ArrayList<String>();
+
+        List<String> Productos = new ArrayList<String>();
         nowShowing.add("The Conjuring");
         nowShowing.add("Despicable Me 2");
         nowShowing.add("Turbo");
@@ -172,6 +123,32 @@ public class MainActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference =firebaseDatabase.getReference();
     }
+    private void listarClientes(){
+        databaseReference.child("Cliente").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                Clientes.clear();
+                for (DataSnapshot objs : snapshot.getChildren()){
+                    Cliente c =objs.getValue(Cliente.class);
+                    Clientes.add(c);
+                    ClientesNombres.add(""+c.getNombre()+" "+c.getRut());
+                    ArrayAdapter<String> a = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_expandable_list_item_1,ListLibroNombre);
+                    lvListadoLibros.setAdapter(a);
+                    //Todo esta es la lista de los clientes, cacha como hacer que sea la lista 1
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
+
+
 }
 
 
