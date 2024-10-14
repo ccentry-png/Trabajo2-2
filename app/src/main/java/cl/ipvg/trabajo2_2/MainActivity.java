@@ -2,7 +2,9 @@ package cl.ipvg.trabajo2_2;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -14,18 +16,26 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+
+    ExpandableListView expListView;
+    Button btnCrearCliente;
+    TextView tvNombreCliente;
+    TextView tvRutCliente;
+    TextView tvTelefonoCliente;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,18 +47,36 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+        expListView =  findViewById(R.id.lvExp);
+        btnCrearCliente =  findViewById(R.id.buttonCrearCliente);
+        tvNombreCliente = findViewById(R.id.editTextNombre);
+        tvRutCliente = findViewById(R.id.editTextRut);
+        tvTelefonoCliente = findViewById(R.id.editTextTelefono);
 
-        // preparing list data
+
+
         GetClientesYProductosDeFirebase();
+        btnCrearCliente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Cliente c = new Cliente();
+                c.setIdCliente(UUID.randomUUID().toString());
+                c.setRut(tvRutCliente.getText().toString());
+                c.setNombre(tvNombreCliente.getText().toString());
+                c.setNumeroTelefono(tvTelefonoCliente.getText().toString());
 
+                databaseReference.child("Cliente").child(c.getIdCliente()).setValue(c);
+
+
+
+            }
+        });
+
+
+
+        //setup list
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
-
-        // setting list adapter
         expListView.setAdapter(listAdapter);
-
-        // Listview Group click listener
         expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
             @Override
@@ -66,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),
+                  //      listDataHeader.get(groupPosition) + " Expanded",
+                    //    Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -77,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),
+                  //      listDataHeader.get(groupPosition) + " Collapsed",
+                    //    Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -90,23 +118,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                // TODO Auto-generated method stub
-                Toast.makeText(
+                //  Auto-generated method stub
+                /*Toast.makeText(
                                 getApplicationContext(),
                                 listDataHeader.get(groupPosition)
                                         + " : "
                                         + listDataChild.get(
                                         listDataHeader.get(groupPosition)).get(
                                         childPosition), Toast.LENGTH_SHORT)
-                        .show();
+                        .show(); */
                 return false;
             }
         });
     }
 
-    /*
-     * Preparing the list data
-     */
+
     private void GetClientesYProductosDeFirebase() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
@@ -134,16 +160,11 @@ public class MainActivity extends AppCompatActivity {
         nowShowing.add("Red 2");
         nowShowing.add("The Wolverine");
 
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
+
 
         listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
         listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
+
     }
 
     private void inicializarFireBase(){
@@ -152,5 +173,5 @@ public class MainActivity extends AppCompatActivity {
         databaseReference =firebaseDatabase.getReference();
     }
 }
-}
+
 

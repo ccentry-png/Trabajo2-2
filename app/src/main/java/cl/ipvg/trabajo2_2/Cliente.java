@@ -4,16 +4,19 @@ public class Cliente {
     private String Rut;
     private String Nombre;
     private String NumeroTelefono;
+    private  String IdCliente;
 
     public Cliente()
     {
+        this.IdCliente ="";
         this.Rut ="";
         this.Nombre ="";
         this.NumeroTelefono ="";
     }
 
-    public Cliente( String rut, String nombre, String numeroTelefono )
+    public Cliente( String id,String rut, String nombre, String numeroTelefono )
     {
+        this.IdCliente = id;
         this.Rut =rut;
         this.Nombre =nombre;
         this.NumeroTelefono = numeroTelefono;
@@ -52,6 +55,13 @@ public class Cliente {
                 '}';
     }
 
+    public String getIdCliente() {
+        return IdCliente;
+    }
+
+    public void setIdCliente(String idCliente) {
+        IdCliente = idCliente;
+    }
 }
 
 
