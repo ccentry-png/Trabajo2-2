@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
                 for (DataSnapshot objs : snapshot.getChildren()){
                     Cliente c =objs.getValue(Cliente.class);
-                    Producto p =objs.getValue(Producto.class)
+                    Producto p =objs.getValue(Producto.class);
 
                     Productos.add(p);
                     Clientes.add(c);
