@@ -2,11 +2,9 @@ package cl.ipvg.trabajo2_2;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -39,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
     TextView tvNombreCliente;
     TextView tvRutCliente;
     TextView tvTelefonoCliente;
-    List<Cliente> Clientes;
-    List<String> ClientesNombres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         inicializarFireBase();
+        getClientesYProductosDeFirebase();
+
 
         //crear cliente
         btnCrearCliente.setOnClickListener(new View.OnClickListener() {
@@ -76,13 +74,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-//
-
-
-
-
         //setup list
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
@@ -90,51 +81,32 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
-    private void GetClientesYProductosDeFirebase() {
+    private void getClientesYProductosDeFirebase() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
         listDataHeader.add("Clientes");
         listDataHeader.add("Productos");
+        List<String> clientesNombres = new ArrayList<>();
+        List<String> productosNombres = new ArrayList<>();
 
-
-        // Adding child data
-
-        ClientesNombres = new ArrayList<String>();
-
-        List<String> Productos = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-
-
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-
-    }
-
-    private void inicializarFireBase(){
-        FirebaseApp.initializeApp(this);
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference =firebaseDatabase.getReference();
-    }
-    private void listarClientes(){
         databaseReference.child("Cliente").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                Clientes.clear();
+                List<Cliente> Clientes = new ArrayList<>();
+                List<Producto> Productos = new ArrayList<>();
+
                 for (DataSnapshot objs : snapshot.getChildren()){
                     Cliente c =objs.getValue(Cliente.class);
+                    Producto p =objs.getValue(Producto.class)
+
+                    Productos.add(p);
                     Clientes.add(c);
-                    ClientesNombres.add(""+c.getNombre()+" "+c.getRut());
-                    ArrayAdapter<String> a = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_expandable_list_item_1,ListLibroNombre);
-                    lvListadoLibros.setAdapter(a);
+
+                    clientesNombres.add(""+c.getNombre()+"  -  "+c.getRut());
+                    productosNombres.add(""+p.getNombre()+"  -  $"+p.getPrecio());
                     //Todo esta es la lista de los clientes, cacha como hacer que sea la lista 1
                 }
             }
@@ -144,10 +116,18 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        listDataChild.put(listDataHeader.get(0), clientesNombres); // Header, Child data
+        listDataChild.put(listDataHeader.get(1), productosNombres);
+
     }
 
-
-
+    private void inicializarFireBase(){
+        FirebaseApp.initializeApp(this);
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference =firebaseDatabase.getReference();
+    }
 
 }
 
